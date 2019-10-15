@@ -317,7 +317,7 @@ class KinesisLoader(object):
 
 def main():
 	s3_arn = getenv("S3_RAW_DATA_BUCKET")
-	firehose_stream_name = getenv("FIREHOSE_STREAM")
+	firehose_stream_name = getenv("FIREHOSE_STREAM_NAME")
 	source_file_bucket_s3 = getenv("S3_SOURCE_FILE_BUCKET")
 	source_file_object_s3 = getenv("S3_SOURCE_FILE_OBJECT")
 	firehose_iam_role = getenv("FIREHOSE_IAM_ROLE")
