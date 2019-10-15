@@ -2,13 +2,19 @@ import json
 import logging
 import time
 import boto3
+from os import getenv
 from botocore.exceptions import ClientError
 
 
 class KinesisLoader(object):
-	def __init__(self, firehose_name, filename, bucket_arn, iam_role_name):
+	"""
+	Simple script to push data from a CSV on S3 to a Firehose delivery stream.
+	Original source: https://docs.aws.amazon.com/code-samples/latest/catalog/python-kinesis-firehose_to_s3.py.html
+	"""
+	def __init__(self, firehose_name, source_file_bucket, source_file_object, bucket_arn, iam_role_name):
 		self.firehose_name = firehose_name
-		self.source_filename = filename
+		self.source_file_bucket = source_file_bucket
+		self.source_file_object = source_file_object
 		self.bucket_arn = bucket_arn
 		self.iam_role_name = iam_role_name
 
@@ -259,24 +265,31 @@ class KinesisLoader(object):
 			firehose_arn = self.create_firehose_to_s3(self.firehose_name, self.bucket_arn, self.iam_role_name)
 			if firehose_arn is None:
 				exit(1)
-			print(f'Created Firehose delivery stream to S3: {firehose_arn}')
+			logging.info(f'Created Firehose delivery stream to S3: {firehose_arn}')
 
 			# Wait for the stream to become active
 			if not self.wait_for_active_firehose(self.firehose_name):
 				exit(1)
-			print('Firehose stream is active')
+			logging.info('Firehose stream is active')
+
+		# Fetch file from S3 and store it locally first
+		s3_client = boto3.client('s3')
+		file_name = "temp-file"
+		with open(file_name, 'wb') as f:
+			s3_client.download_fileobj(self.source_file_bucket, self.source_file_object, f)
 
 		# Put records into the Firehose stream
 		firehose_client = boto3.client('firehose', 'us-east-2')
 		i = 0
-		with open(self.source_filename, 'r') as f:
+		batch_size = 500
+		with open(file_name, 'r') as f:
 			lines = f.readlines()
 
 			print('Putting records into the Firehose 100 at a time')
 			while i < len(lines):
-				last = min(i + 100, len(lines) - 1)
+				last = min(i + batch_size, len(lines) - 1)
 				batch = [{'Data': lines[idx]} for idx in range(i, last)]
-				i += 100
+				i += batch_size
 				# Put the batch into the Firehose stream
 				try:
 					result = firehose_client.put_record_batch(DeliveryStreamName=self.firehose_name, Records=batch)
@@ -288,25 +301,28 @@ class KinesisLoader(object):
 				num_failures = result['FailedPutCount']
 				if num_failures:
 					# Resend failed records
-					print(f'Resending {num_failures} failed records')
+					logging.info(f'Resending {num_failures} failed records')
 					rec_index = 0
 					for record in result['RequestResponses']:
 						if 'ErrorCode' in record:
 							# Resend the record
-							firehose_client.put_record(DeliveryStreamName=self.firehose_name,
-																				 Record=batch[rec_index])
+							firehose_client.put_record(DeliveryStreamName=self.firehose_name, Record=batch[rec_index])
 
 							# Stop if all failed records have been resent
 							num_failures -= 1
 							if not num_failures:
 								break
 						rec_index += 1
-			print('Test data sent to Firehose stream')
 
 
 def main():
-	s3_arn = "arn:aws:s3:::prediction-data-raw"
-	kinesis_loader = KinesisLoader("predictions-raw-data", "Predict.csv", s3_arn, "firehose_delivery_role")
+	s3_arn = getenv("S3_RAW_DATA_BUCKET")
+	firehose_stream_name = getenv("FIREHOSE_STREAM")
+	source_file_bucket_s3 = getenv("S3_SOURCE_FILE_BUCKET")
+	source_file_object_s3 = getenv("S3_SOURCE_FILE_OBJECT")
+	firehose_iam_role = getenv("FIREHOSE_IAM_ROLE")
+
+	kinesis_loader = KinesisLoader(firehose_stream_name, source_file_bucket_s3, source_file_object_s3, s3_arn, firehose_iam_role)
 	kinesis_loader.start_load()
 
 

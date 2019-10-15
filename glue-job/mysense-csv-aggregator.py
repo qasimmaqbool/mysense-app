@@ -18,7 +18,6 @@ job.init(args['JOB_NAME'], args)
 ## @return: datasource0
 ## @inputs: []
 datasource0 = glueContext.create_dynamic_frame.from_catalog(database="prediction-raw", table_name="2019", transformation_ctx="datasource0")
-# datasource0 = glueContext.create_dynamic_frame_from_options("s3", {'paths': ["s3://prediction-data-raw/2019/10/13/20/"], 'recurse': True, 'groupFiles': 'inPartition', 'groupSize': '104857600'}, format="csv")
 ## @type: ApplyMapping
 ## @args: [mapping = [("col0", "long", "col0", "long"), ("col1", "double", "col1", "double"), ("col2", "string", "col2", "string"), ("col3", "string", "col3", "string"), ("col4", "string", "col4", "string"), ("col5", "string", "col5", "string"), ("col6", "long", "col6", "long"), ("col7", "string", "col7", "string"), ("col8", "string", "col8", "string"), ("col9", "string", "col9", "string"), ("col10", "string", "col10", "string"), ("col11", "double", "col11", "double"), ("col12", "string", "col12", "string"), ("partition_0", "string", "partition_0", "string"), ("partition_1", "string", "partition_1", "string"), ("partition_2", "string", "partition_2", "string"), ("partition_3", "string", "partition_3", "string")], transformation_ctx = "applymapping1"]
 ## @return: applymapping1

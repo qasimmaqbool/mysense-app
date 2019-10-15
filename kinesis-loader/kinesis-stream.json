@@ -2,7 +2,7 @@
     "DeliveryStreamType": "DirectPut",
     "S3DestinationConfiguration": {
         "RoleARN": "arn:aws:iam::703680902689:role/firehose_delivery_role",
-        "BucketARN": "arn:aws:s3:::prediction-data-raw",
+        "BucketARN": "arn:aws:s3:::mysense-raw-data-bucket",
         "BufferingHints": {
             "SizeInMBs": 1,
             "IntervalInSeconds": 300

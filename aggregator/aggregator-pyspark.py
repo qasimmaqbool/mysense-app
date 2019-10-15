@@ -4,7 +4,7 @@ import boto3
 
 from pyspark import SparkContext
 
-S3_PATH = 's3a://prediction-data-parquet/*.snappy.parquet'
+S3_PATH = 's3a://prediction-data-parquet/*.parquet'
 
 
 if __name__ == "__main__":

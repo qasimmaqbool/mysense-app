@@ -12,9 +12,20 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: "kinesis-load-app"
-          image: 703680902689.dkr.ecr.us-east-2.amazonaws.com/aggregator:v2
+          image: ${AWS_USER_ID}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest
           imagePullPolicy: Always
           resources:
             limits:
               cpu: 1
               memory: 2048Mi
+          environment:
+            - name: S3_RAW_DATA_BUCKET
+              value: "mysense-raw-data-bucket"
+            - name: FIREHOSE_STREAM_NAME
+              value: "mysense-raw-data-stream"
+            - name: S3_SOURCE_FILE_BUCKET
+              value: "prediction-data-raw"
+            - name: S3_SOURCE_FILE_OBJECT
+              value: "raw-csv/Predict.csv"
+            - name: FIREHOSE_IAM_ROLE
+              value: "firehose_delivery_role"
