@@ -1,0 +1,20 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "kinesis-loader"
+  namespace: default
+  labels:
+    app: kinesis-csv-loader
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: "kinesis-load-app"
+          image: 703680902689.dkr.ecr.us-east-2.amazonaws.com/aggregator:v2
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 1
+              memory: 2048Mi

@@ -1,0 +1,14 @@
+{
+    "Name": "mysense-csv-aggregator",
+    "Role": "AWSGlueServiceRole-Default",
+    "ExecutionProperty": {
+        "MaxConcurrentRuns": 1
+    },
+    "Command": {
+        "Name": "glueetl",
+        "ScriptLocation": "s3://mysense-app-glue-scripts/mysense-csv-aggregator.py",
+        "PythonVersion": "3"
+    },
+    "Timeout": 1000,
+    "GlueVersion": "1.0"
+}

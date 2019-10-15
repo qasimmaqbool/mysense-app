@@ -1,0 +1,15 @@
+{
+    "Role": "AWS-Glue-Role",
+    "DatabaseName": "mysense-raw-db",
+    "Description": "",
+    "Targets": {
+        "S3Targets": [
+            {
+                "Path": "s3://mysense-app-raw-data"
+            }
+        ]
+    },
+    "Classifiers": [
+        "mysense-app-raw"
+    ]
+}

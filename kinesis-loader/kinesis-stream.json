@@ -1,0 +1,14 @@
+{
+    "DeliveryStreamType": "DirectPut",
+    "S3DestinationConfiguration": {
+        "RoleARN": "arn:aws:iam::703680902689:role/firehose_delivery_role",
+        "BucketARN": "arn:aws:s3:::prediction-data-raw",
+        "BufferingHints": {
+            "SizeInMBs": 1,
+            "IntervalInSeconds": 300
+        },
+        "CloudWatchLoggingOptions": {
+            "Enabled": false
+        }
+    }
+}

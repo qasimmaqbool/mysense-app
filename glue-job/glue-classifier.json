@@ -1,0 +1,13 @@
+{
+    "CsvClassifier": {
+        "Name": "mysense-app-raw",
+        "Delimiter": ";",
+        "QuoteSymbol": "\"",
+        "ContainsHeader": "ABSENT",
+        "Header": [
+            "\"ID\";\"sentiment\";\"orgs_bvid\";\"sub_signal\";\"source\";\"orgs\";\"corp-ctapproved_exists\";\"title\";\"similarityClusterID\";\"signal\";\"rowKey\";\"similarityScore\";\"timestamp\""
+        ],
+        "DisableValueTrimming": true,
+        "AllowSingleColumn": true
+    }
+}
